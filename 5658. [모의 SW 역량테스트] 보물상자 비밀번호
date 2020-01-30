@@ -1,0 +1,67 @@
+
+#include<iostream>
+#include<vector>
+#include<string>
+#include<deque>
+#include<math.h>
+#include<algorithm>
+
+using namespace std;
+
+
+int main()
+{
+	int test_case;
+	int T;
+	cin >> T;
+
+	for (test_case = 1; test_case <= T; ++test_case)
+	{
+		int n, k;
+		string str;
+		vector<long long> v;
+		cin >> n >> k>>str;
+		deque<char> dq;
+		for (int i = 0; i < str.length(); i++)
+		{
+			dq.push_back(str[i]);
+		}
+		int rotation = n / 4;
+		for (int i = 0; i < rotation; i++)
+		{
+			
+			for (int j = 0; j < 4; j++)
+			{
+				string tmp;
+				for (int k = 0; k < rotation; k++)
+				{
+					tmp += dq.front();
+					dq.push_back(dq.front());
+					dq.pop_front();
+				}
+				//16진수를 10진수로 만들어서 벡터에 넣기
+				long long  num = 0;
+				int idx = 0;
+				for (int k = rotation-1; k >=0; k--)
+				{
+					int mul = tmp[idx++]-48;
+					if (mul > 9)
+					{
+						mul -= 7;
+					}
+					num += pow(16, k) * mul;
+				}
+				v.push_back(num);
+			}
+			//dq하나 pop해서 뒤에 넣ㄱㅣ
+			dq.push_back(dq.front());
+			dq.pop_front();
+
+		}
+		sort(v.begin(), v.end(), greater<long long>());
+		v.erase(unique(v.begin(), v.end()),v.end());
+
+		cout << "#" << test_case << " " << v[k-1] << endl;
+	}
+	return 0;
+}
