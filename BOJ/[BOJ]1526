@@ -1,0 +1,29 @@
+#include<iostream>
+#include<vector>
+#include<string>
+#include<deque>
+#include<math.h>
+#include<algorithm>
+
+using namespace std;
+int n, ans;
+void check(int x)
+{
+    if (x > n) return;
+
+    if (x > ans)
+    {
+        ans = x;
+    }
+
+    check(x * 10 + 4);
+    check(x * 10 + 7);
+}
+
+int main()
+{
+    scanf("%d", &n);
+    check(0);
+    printf("%d", ans);
+    return 0;
+}
