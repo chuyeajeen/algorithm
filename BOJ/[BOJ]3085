@@ -1,0 +1,104 @@
+//사탕게임
+
+#include<iostream>
+#include<math.h>
+#include<vector>
+#include<algorithm>
+using namespace std;
+char map[51][51];
+int num[4];
+int dx[4] = { 1,-1,0,0 };
+int dy[4] = { 0,0,1,-1 };
+int n;
+int answer;
+
+void bfs(int x, int y, int idx, int count)
+{
+	int nx = x + dx[idx];
+	int ny = y + dy[idx];
+	if (map[x][y] != map[nx][ny]|| nx < 0 || nx >= n || ny < 0 || ny >= n)
+	{
+		num[idx] = count;
+		return;
+	}
+	bfs(nx, ny, idx, count + 1);
+}
+void check(int x, int y)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		int nx = x + dx[i];
+		int ny = y + dy[i];
+		if (nx < 0 || nx >= n || ny < 0 || ny >= n)
+		{
+			continue;
+		}
+		if (map[x][y] == map[nx][ny])
+		{
+			bfs(nx, ny, i, 2);
+		}
+	}
+	if (num[0] != 0 && num[1] != 0)
+	{
+		num[0] += num[1] - 1;
+		num[1] = 0;
+	}
+	if (num[2] != 0 && num[3] != 0)
+	{
+		num[2] += num[3] - 1;
+		num[3] = 0;
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (num[i] != 0)
+		{
+			if (answer < num[i])
+				answer = num[i];
+		}
+		num[i] = 0;
+	}
+}
+
+void pick(int x, int y)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		int nx = x + dx[i];
+		int ny = y + dy[i];
+		if (nx < 0 || nx >= n || ny < 0 || ny >= n)
+		{
+			continue;
+		}
+		char tmp = map[x][y];
+		map[x][y] = map[nx][ny];
+		map[nx][ny] = tmp;
+		check(x,y);
+		map[nx][ny] = map[x][y];
+		map[x][y] = tmp;
+	}
+}
+
+int main()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			char tmp;
+			cin >> tmp;
+			map[i][j] = tmp;
+		}
+	}
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			pick(i, j);
+		}
+	}
+	cout << answer << endl;
+	return 0;
+
+}
