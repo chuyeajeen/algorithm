@@ -1,0 +1,32 @@
+#include<stdio.h>
+#include<math.h>
+#include<algorithm>
+
+using namespace std;
+
+int day;
+int  work[16], pay[16];
+int result[16];
+int check(int i) 
+{
+	if (i > day)
+		return -999999;
+	else if (i == day)
+		return 0;
+	return max(check(i + 1), check(work[i] + i) + pay[i]);
+}
+
+int main() 
+{
+	int max = 0;
+	scanf("%d", &day);
+	for (int i = 0; i < day; i++)
+	{
+		scanf("%d %d", &work[i], &pay[i]);
+	}
+		int result = check(0);
+	
+	printf("%d", result);
+
+	return 0;
+}
