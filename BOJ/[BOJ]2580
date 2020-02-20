@@ -1,0 +1,74 @@
+#include<iostream>
+
+using namespace std;
+
+int arr[9][9];
+bool v_check[9][10];
+bool h_check[9][10];
+bool s_check[9][10];
+
+int s_cal(int x, int y)
+{
+	int answer = (x / 3) * 3 + (y / 3);
+	return answer;
+}
+
+void solution(int cnt)
+{
+	if (cnt == 81)
+	{
+		for (int i = 0; i < 9; i++)
+		{
+			for (int j = 0; j < 9; j++)
+			{
+				cout << arr[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		exit(0);
+	}
+
+	int x = cnt / 9;
+	int y = cnt % 9;
+
+	if (arr[x][y] != 0)
+		solution(cnt + 1);
+	else
+	{
+		for (int i = 1; i < 10; i++)
+		{
+			if (!v_check[x][i] && !h_check[y][i] && !s_check[s_cal(x, y)][i] )
+			{
+				v_check[x][i] = true;
+				h_check[y][i] =true;
+				s_check[s_cal(x, y)][i] =true;
+				arr[x][y] = i;
+
+				solution(cnt+1);
+
+				v_check[x][i] = false;
+				h_check[y][i] = false;
+				s_check[s_cal(x, y)][i] = false;
+				arr[x][y] = 0;
+			}
+		}
+	}
+}
+
+
+int main()
+{
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			cin >> arr[i][j];
+			v_check[i][arr[i][j]] = true;
+			h_check[j][arr[i][j]] = true;
+			s_check[s_cal(i, j)][arr[i][j]] = true;
+		}
+	}
+
+	solution(0);
+	return 0;
+}
