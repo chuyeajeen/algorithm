@@ -1,0 +1,144 @@
+#include<iostream>
+#include<queue>
+using namespace std;
+
+char arr[11][11];
+int n,m;
+queue<pair<int, int>> red;
+queue<pair<int, int>> blue;
+int dx[4] = { 0,0,-1,1 };
+int dy[4] = { 1,-1,0,0 };
+
+int check(int x, int y, int nx, int ny)
+{
+	int dist = 0;
+	dist =  abs(x - nx) + abs(y - ny);
+	return dist;
+
+}
+void solution()
+{
+	int answer = 0;
+	int visit[11][11][11][11] = { 0, };
+
+	while(!red.empty())
+	{
+		answer++;
+		int size = red.size();
+
+		while(size--)
+		{
+			int red_x = red.front().first;
+			int red_y = red.front().second;
+			int blue_x = blue.front().first;
+			int blue_y = blue.front().second;
+			red.pop();
+			blue.pop();
+			visit[red_x][red_y][blue_x][blue_y] = 1;
+
+			
+			for (int i = 0; i < 4; i++)
+			{
+				bool red_flag = false;
+				bool blue_flag = false;
+
+				int blue_nx = blue_x + dx[i];
+				int blue_ny = blue_y + dy[i];
+				int red_nx = red_x + dx[i];
+				int red_ny = red_y + dy[i];
+				while (1)
+				{
+					if (arr[red_nx][red_ny] == '#' )
+					{
+						break;
+					}
+					if (arr[red_nx][red_ny] == 'O')
+					{
+						red_flag = true;
+						break;
+					}
+					red_nx = red_nx + dx[i];
+					red_ny = red_ny + dy[i];
+				}
+				red_nx -= dx[i];
+				red_ny -= dy[i];
+				while (1)
+				{
+					
+					if (arr[blue_nx][blue_ny] == '#' )
+					{
+						break;
+					}
+					if (arr[blue_nx][blue_ny] == 'O')
+					{
+						blue_flag = true;
+						break;
+					}
+					blue_nx = blue_nx + dx[i];
+					blue_ny = blue_ny + dy[i];
+				}
+				blue_nx -= dx[i];
+				blue_ny -= dy[i];
+				
+				if (blue_flag) continue;
+				if (red_flag)
+				{
+					cout << answer << endl;
+					return;
+				}
+				if (red_nx == blue_nx && red_ny == blue_ny) // 같은 자리로 이동될경우
+				{
+					int red_dist = check(red_x, red_y, red_nx, red_ny);
+					int blue_dist = check(blue_x, blue_y, blue_nx, blue_ny);
+
+					if (red_dist > blue_dist)
+					{
+						red_nx -= dx[i];
+						red_ny -= dy[i];
+					}
+					else
+					{
+						blue_nx -= dx[i];
+						blue_ny -= dy[i];
+					}
+				}
+				if (visit[red_nx][red_ny][blue_nx][blue_ny] == 1)
+					continue;
+				else
+				{
+					visit[red_nx][red_ny][blue_nx][blue_ny] = 1;
+					red.push({ red_nx, red_ny });
+					blue.push({ blue_nx,blue_ny });
+				}
+				
+			}
+		}
+	}
+	cout << "-1" << endl;
+}
+
+int main()
+{
+	cin >> n >> m;
+	for (int i = 0; i < n; i++)
+	{
+		string tmp;
+		cin >> tmp;
+		int len = tmp.length();
+		for (int j = 0; j < len; j++)
+		{
+			if (tmp[j] == 'B')
+			{
+				blue.push({ i,j });
+			}
+			else if (tmp[j] == 'R')
+			{
+				red.push({ i,j });
+			}
+			arr[i][j] = tmp[j];
+		}
+	}
+
+	solution();
+	return 0;
+}
