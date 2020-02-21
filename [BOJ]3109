@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include<algorithm>
+#include<queue>
+using namespace std;
+
+int dx[3] = { -1,0,1 }; //우상단 대각선, 우측, 
+int dy[3]= { 1,1,1 };
+int r, c;
+char arr[10001][501];
+int visit[10001][501] ;
+int answer = 0;
+bool check;
+
+//처음에 BFS로 접근, 마지막 처리 안되어 DFS풀이
+
+void solution(int x, int y)
+{
+	visit[x][y] = true;
+	if (y == c - 1)
+	{
+		check = true;
+		answer++;
+		return;
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		int nx = x + dx[i];
+		int ny = y + dy[i];
+
+		if (nx < 0 || ny<0 || nx >= r || ny>c || visit[nx][ny] == 1)
+			continue;
+		else if (arr[nx][ny] == '.')
+		{
+			solution(nx, ny);
+			if (check)return;
+		}
+	}
+
+}
+
+int main()
+{	
+	cin >> r >> c;
+
+	//input (0부터 시작)
+	for (int i = 0; i < r; i++)
+	{
+		string tmp;
+		cin >> tmp;
+		for (int j = 0; j < c; j++)
+		{
+			arr[i][j] = tmp[j];
+		}
+	}
+
+	for (int i = 0; i < r; i++)
+	{
+		check = false;
+		solution(i,0);
+	}
+	cout << answer;
+
+	return 0;
+}
