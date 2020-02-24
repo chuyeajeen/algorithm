@@ -1,0 +1,69 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <stack>
+#include <queue>
+#include<algorithm>
+using namespace std;
+
+int n, m, s, e;
+int visit[300001];
+queue<int> q, tel[300001]; // 텔레포트 자료구조 queue로 pop해서 2번쓰는것 방지
+
+int bfs()
+{
+	int ans = 0;
+	while (!q.empty())
+	{
+		int size = q.size();
+		for (int i = 0; i < size; i++)
+		{
+			int idx = q.front();
+			q.pop();
+
+			if (idx == e)
+			{
+				return ans;
+			}
+			if (visit[idx + 1] == 0 && idx + 1 <= n)
+			{
+				visit[idx + 1] = 1;
+				q.push(idx + 1);
+			}
+			if (visit[idx - 1] == 0 && idx - 1 > 0)
+			{
+				visit[idx - 1] = 1;
+				q.push(idx - 1);
+			}
+			while (!tel[idx].empty())
+			{
+				int tmp = tel[idx].front();
+				tel[idx].pop();
+				if (visit[tmp] == 0)
+				{
+					visit[tmp] = 1;
+					q.push(tmp);
+				}
+			}
+		}
+		ans++;
+
+	}
+}
+
+int main()
+{
+	cin >> n >> m >> s >> e;
+	q.push(s);
+	visit[s] = 1;
+	for (int i = 0; i < m; i++)
+	{
+		int tmp1, tmp2;
+		cin >> tmp1 >> tmp2;
+		tel[tmp1].push(tmp2);
+		tel[tmp2].push(tmp1);
+	}
+
+	int ans = bfs();
+	cout << ans<<endl;
+}
