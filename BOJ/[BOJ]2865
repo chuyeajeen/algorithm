@@ -1,0 +1,58 @@
+#pragma once
+
+#include <iostream>
+#include <vector>
+#include<algorithm>
+#include<queue>
+#include<string>
+#define MAX 100
+
+using namespace std;
+
+int num, gen_num, final_num;
+float person[MAX + 1];
+vector<float> arr[MAX];
+
+void input()
+{
+	cin >> num >> gen_num >> final_num;
+
+	for (int i = 0; i < gen_num; i++)
+	{
+		for (int j = 0; j < num; j++)
+		{
+			int tmp;
+			float score;
+			cin >> tmp >> score;
+			arr[tmp-1].push_back(score);
+		}
+	}
+}
+
+void solution()
+{
+	float answer = 0.0;
+	priority_queue<float> tmp;
+	for (int i = 0; i < num; i++)
+	{
+		sort(arr[i].begin(), arr[i].end());
+		tmp.push(arr[i].back());
+	}
+
+
+	for (int i = 0; i < final_num; i++)
+	{
+		answer += tmp.top();
+		tmp.pop();
+	}
+
+	printf("%.1f", answer);
+}
+
+int main()
+{
+	input();
+	solution();
+
+	return 0;
+}
