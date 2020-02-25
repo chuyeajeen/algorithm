@@ -1,0 +1,81 @@
+#pragma once
+
+#include <iostream>
+#include <vector>
+#include<algorithm>
+#include<queue>
+#include<string>
+#define MAX 1000000
+
+using namespace std;
+
+int n, len;
+char arr[MAX];
+
+void solution()
+{
+	int idx[2] = { 73,79 };	//73=I, 79=O 아스키 인덱스
+	vector<int> section; //io 구간 길이 넣어줌
+	int answer = 0;
+
+	for (int i = 0; i < len-1; i++)
+	{
+		int start_idx = 0;
+		int len = 1;
+		if (arr[i] == idx[start_idx]) //I이면 검사 시작
+		{
+			start_idx++;
+			while (1)
+			{
+				if (arr[i + 1] != idx[start_idx])
+					break;
+				start_idx = (start_idx + 1) % 2;
+				i++;
+				len++;
+			}
+			if (len >= 3)section.push_back(len);	//길이 3 넘으면 ioi한 구간
+		}
+	}
+
+	int size = section.size();
+	for (int i = 0; i < size; i++)
+	{
+		int len = section[i];
+		if (len >= n)
+		{
+			int sub = len - n;
+			if (sub != 0)
+			{
+				answer += (sub / 2) + 1;
+			}
+			else
+			{
+				answer += 1;
+			}
+		}
+	}
+
+	cout << answer << endl;
+}
+
+void input()
+{
+	cin >> n >> len;
+	string tmp;
+	cin >> tmp;
+
+	n = 3 + (2 * (n - 1));
+	for (int i = 0; i < len; i++)
+	{
+		arr[i] = tmp[i];
+	}
+
+}
+
+int main()
+{
+	input();
+	solution();
+
+	return 0;
+}
