@@ -1,0 +1,55 @@
+#include<iostream>
+#include<queue>
+using namespace std;
+/*
+
+틀렸던 이유
+1. 반복문 안에서 반복된 변수 선언으로 메모리 초과
+2. 문서 번호로 보지 않고 ABC로 봐서 알파벳 넘어갔을때 틀림 
+
+*/
+int main()
+{
+	int test_case;
+	cin >> test_case;
+	while (test_case--)
+	{
+		int n, document;
+		priority_queue<int> pq;
+		queue<pair<int, char>> q;
+
+		int importance;
+		cin >> n >> document;
+		for(int i=0;i<n;i++)
+		{
+			cin >> importance;
+			q.push({ importance, i});
+			pq.push(importance);
+		}
+
+		int answer = 1;
+		int tmp1;
+		char tmp2;
+
+		while (q.size())
+		{
+			tmp1 = q.front().first;
+			tmp2 = q.front().second;
+			q.pop();
+
+			if (pq.top() == tmp1)
+			{
+				if (tmp2 == document)
+				{
+					cout << answer << "\n";
+					break;
+				}
+				pq.pop();
+				answer++;
+			}
+			else q.push({ tmp1, tmp2 });
+
+		}
+	}
+	return 0;
+}
