@@ -1,0 +1,131 @@
+#include<iostream>
+#include<queue>
+#include<math.h>
+#include<algorithm>
+using namespace std;
+
+int n;
+char arr[101][101];
+bool check[101][101];
+int dx[4] = { 1,-1,0,0 };
+int dy[4] = { 0,0,-1,1 };
+
+void input()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		string tmp;
+		cin >> tmp;
+		for (int j = 0; j < n; j++)
+		{
+			arr[i][j] = tmp[j];
+		}
+	}
+}
+
+void normal_bfs(int x, int y)
+{
+	queue<pair<int, int>> q;
+	q.push({ x, y });
+	check[x][y] = 1;
+	while (!q.empty())
+	{
+		int nx = q.front().first;
+		int ny = q.front().second;
+		q.pop();
+		
+		for (int i = 0; i < 4; i++)
+		{
+			int nnx = nx + dx[i];
+			int nny = ny + dy[i];
+			if (nnx<0 || nny<0 || nnx>=n || nny >=n || check[nnx][nny] == 1) continue;
+			else if(arr[nx][ny] == arr[nnx][nny])
+			{
+				check[nnx][nny] = 1;
+				q.push({ nnx, nny });
+			}
+		}
+	}
+}
+
+void pill_bfs(int x, int y)
+{
+	queue<pair<int, int>> q;
+	q.push({ x, y });
+	check[x][y] = 1;
+	while (!q.empty())
+	{
+		int nx = q.front().first;
+		int ny = q.front().second;
+		q.pop();
+		
+		for (int i = 0; i < 4; i++)
+		{
+			int nnx = nx + dx[i];
+			int nny = ny + dy[i];
+			if (nnx < 0 || nny<0 || nnx >= n || nny >=n || check[nnx][nny] == 1) continue;
+			else if (arr[nx][ny]=='B'  )
+			{
+				if (arr[nx][ny] == arr[nnx][nny])
+				{
+					check[nnx][nny] = 1;
+					q.push({ nnx, nny });
+				}
+			}
+			else if(arr[nnx][nny]!='B')
+			{
+				check[nnx][nny] = 1;
+				q.push({ nnx, nny });
+			}
+		}
+	}
+}
+
+void solution()
+{
+	//정상
+	int answer = 0;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (check[i][j] == 0)
+			{
+				normal_bfs(i, j);
+				answer++;
+			}
+		}
+	}
+
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+			check[i][j] = 0;
+	}
+
+	//적녹색약
+	int pill_answer = 0;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (check[i][j] == 0)
+			{
+				pill_bfs(i, j);
+				pill_answer++;
+			}
+		}
+	}
+
+	cout << answer <<" "<< pill_answer << endl;
+}
+
+int main()
+{
+
+	input();
+	solution();
+	
+	return 0;
+}
