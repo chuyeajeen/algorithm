@@ -1,0 +1,85 @@
+#include<iostream>
+#include<queue>
+#include<math.h>
+#include<algorithm>
+using namespace std;
+
+/*
+
+m개의 치킨집을 고른 후 -> 모든 집과의 치킨거리를 구해서 더한다
+
+*/
+
+int map[51][51];	//1부터 시작
+int n, m;
+vector<pair<int, int>> chicken;
+vector<pair<int, int>> home;
+vector<int> ck_dist; 
+int choice[13];
+
+void input()
+{
+	cin >> n >> m;
+	for (int i = 1; i <= n; i++)
+	{
+		string tmp;
+		for (int j = 1; j <= n; j++)
+		{
+			cin >> map[i][j]; //0 : 빈칸, 1:집, 2치킨집
+			if (map[i][j] == 2)
+			{
+				chicken.push_back({ i,j });
+			}
+			else if (map[i][j] == 1)
+			{
+				home.push_back({ i,j });
+			}
+		}
+	}
+}
+
+
+void solution()
+{
+	int answer = 0;
+	for (int i = 0; i < home.size(); i++)
+	{
+		int home_x = home[i].first;
+		int home_y = home[i].second;
+		int min_dist = 101; //초기값 가장 먼 거리 셋팅
+		for (int j = 0; j < m; j++)
+		{
+			int ck_x = chicken[choice[j]].first;
+			int ck_y = chicken[choice[j]].second;
+
+			int dist = abs(home_x - ck_x) + abs(home_y - ck_y);
+			min_dist = min_dist < dist ? min_dist : dist;
+		}
+		answer += min_dist;
+	}
+	ck_dist.push_back(answer);
+
+}
+
+void pick_ck(int c_idx, int ck_idx, int size)
+{
+	if (c_idx == m) //m개의 치킨집 뽑았을떄
+	{
+		solution(); //ck거리 계산
+		return;
+	}
+
+	for (int i = ck_idx; i < size; i++)
+	{
+		choice[c_idx] = i;
+		pick_ck(c_idx + 1, i+1, size);
+	}
+}
+int main()
+{
+	input();	//입력
+	pick_ck(0,0,chicken.size()); //m개의 치킨집 뽑기
+	sort(ck_dist.begin(), ck_dist.end()); //오름차순 정렬
+	cout << ck_dist[0] << endl;
+	return 0;
+}
