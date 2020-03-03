@@ -1,0 +1,151 @@
+
+/*
+틀린 이유 1 : l이 1일때 예외처리
+틀린 이유 2 : 높이 차이가 1 이상일때 check false처리 안해줌
+*/
+#include<iostream>
+#include<math.h>
+#define MAX 101
+using namespace std;
+
+int n, l, answer;
+int arr[MAX][MAX];
+int ladder[MAX][MAX];	//사다리 높은 자리 체크(중복 사다리 방지)
+int dx[4] = { 0,0,1,-1 };
+int dy[4] = { 1,-1,0,0 };
+
+void input()
+{
+	cin >> n >> l;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			cin >> arr[i][j];
+		}
+	}
+}
+
+bool ladder_check(int x, int y, int idx)
+{
+	if (idx == 2 || idx==0)	//오른쪽이 작다면 x,y 시작점 오른쪽으로 한칸 옮기기
+	{
+		x += dx[idx];
+		y += dy[idx];
+	}
+	int nx = x;
+	int ny = y;
+	bool check = true;
+
+	if (l == 1)	//계단 한칸일때 예외처리
+	{
+		nx += dx[idx];
+		
+		if (ladder[x][y] == 0 )
+		{
+			ladder[x][y] = 1;
+			return true;
+		}
+		else return false;
+	}
+	else
+	{
+		for (int i = 0; i < l - 1; i++)
+		{
+			nx = nx + dx[idx];
+			ny = ny + dy[idx];
+			
+			if (arr[x][y] == arr[nx][ny] && ladder[x][y] == 0 && ladder[nx][ny] == 0)
+				continue;
+			else
+			{
+				check = false;
+				break;
+			}
+		}
+		if (check)
+		{
+			nx = x;
+			ny = y;
+			ladder[nx][ny] = 1;
+			for (int i = 0; i < l-1; i++)
+			{
+				nx = nx + dx[idx];
+				ny = ny + dy[idx];
+				ladder[nx][ny] = 1;
+			}
+			return true;
+		}
+		return false;
+	}
+	
+}
+
+void solution()
+{
+	//가로 체크
+	for (int i = 0; i < n; i++)
+	{
+		bool check = true;
+		for (int j = 0; j < n-1; j++)
+		{
+			if (arr[i][j] == arr[i][j + 1])continue; //평지
+			else if (abs(arr[i][j] - arr[i][j + 1]) == 1) //1계단 차이 
+			{
+				int idx = arr[i][j] > arr[i][j + 1] ? 0 : 1;//작은 값의 dx의 idx값
+				check = ladder_check(i, j, idx);
+				if (check == false)
+				{
+					break;
+				}
+			}
+			else
+			{
+				check = false;
+				break;
+			}
+			
+		}
+		if (check)answer++;
+		for (int j = 0; j < n; j++) //배열 초기화
+		{
+			ladder[i][j] = 0;
+		}
+	}
+
+	//세로 체크
+	for (int j = 0; j < n; j++)
+	{
+		bool check = true;
+		for (int i = 0; i < n - 1; i++)
+		{
+			if (arr[i][j] == arr[i + 1][j])continue;
+			else if (abs(arr[i][j] - arr[i + 1][j]) == 1)
+			{
+				int idx = arr[i][j] > arr[i+1][j] ? 2 : 3;
+				check = ladder_check(i, j, idx);
+				if (check == false)
+				{
+					break;
+				}
+			}
+			else
+			{
+				check = false;
+				break;
+			}
+		}
+		if (check)answer++;
+	}
+
+	cout << answer;
+}
+
+
+int main()
+{
+
+	input();
+	solution();
+	return 0;
+}
