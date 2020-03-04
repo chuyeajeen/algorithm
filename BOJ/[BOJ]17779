@@ -1,0 +1,159 @@
+//게리맨더링2
+#include<iostream>
+#define MAX 21
+#define INFINITY 987654321
+using namespace std;
+
+int n, arr[MAX][MAX], total_sum, answer=INFINITY;
+
+void input()
+{
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+	{
+		for (int j = 1; j <= n; j++)
+		{
+			cin >> arr[i][j]; 
+			total_sum += arr[i][j];
+		}
+	}
+}
+
+void divide(int x, int y, int d1, int d2)
+{
+	int check[MAX][MAX] = { 0, };
+	int max = 0, min = INFINITY, total=0;
+
+	//5영역 -1로 구분
+	for (int i = x, j=y; i <= x + d1 ; i++)
+	{
+		check[i][j--] = -1;
+	}
+
+	for (int i = x, j=y; i <= x + d2; i++)
+	{
+		check[i][j++] = -1;
+	}
+
+	for (int i = x+d1, j=y-d1; i <= x + d1+d2; i++)
+	{
+		check[i][j++] = -1;
+	}
+
+	for (int i = x+d2, j=y+d2; i <= x + d1+d2; i++)
+	{
+		check[i][j--] = -1;
+	}
+
+	int sum = 0;
+
+	//1구역
+	for (int i = 1; i < x + d1; i++)
+	{
+		for (int j = 1; j <= y; j++)
+		{
+			if (check[i][j] == -1)break;
+			else
+			{
+				check[i][j] = 1;
+				sum += arr[i][j];
+			}
+		}
+	}
+	max = max > sum ? max : sum;
+	min = min < sum ? min : sum;
+	total += sum;
+	sum = 0;
+
+	//3구역
+	for (int i = x+d1; i <= n; i++)
+	{
+		for (int j = 1; j < y-d1+d2; j++)
+		{
+			if (check[i][j] == -1)break;
+			else
+			{
+				check[i][j] = 3;
+				sum += arr[i][j];
+			}
+		}
+	}
+	max = max > sum ? max : sum;
+	min = min < sum ? min : sum;
+	total += sum;
+	sum = 0;
+
+	//2구역
+	for (int i = x+d2; i >= 1; i--)
+	{
+		for (int j = n; j > y; j--)
+		{
+			if (check[i][j] == -1)break;
+			else
+			{
+				check[i][j] = 2;
+				sum += arr[i][j];
+			}
+		}
+	}
+	max = max > sum ? max : sum;
+	min = min < sum ? min : sum;
+	total += sum;
+	sum = 0;
+
+	//4구역
+	for (int i = n; i > x+d2; i--)
+	{
+		for (int j = n; j >= y-d1+d2; j--)
+		{
+			if (check[i][j] == -1)break;
+			else
+			{
+				check[i][j] = 4;
+				sum += arr[i][j];
+			}
+		}
+	}
+	max = max > sum ? max : sum;
+	min = min < sum ? min : sum;
+	total += sum;
+	sum = 0;
+
+	int sum_5 = total_sum - total;
+	max = max > sum_5 ? max : sum_5;
+	min = min < sum_5 ? min : sum_5;
+
+	int tmp = max - min;
+	answer = answer < tmp ? answer : tmp;
+
+}
+
+void solution()
+{
+	for (int i = 1; i <= n; i++)
+	{
+		for (int j = 1; j <= n; j++)
+		{
+			for (int d1 = 1; d1 < n; d1++)
+			{
+				for (int d2 = 1; d2 < n; d2++)
+				{
+					if (i + d1 + d2 <= n && j + d2 <= n)
+					{
+						divide(i, j, d1, d2);
+					}
+
+				}
+			}
+		}
+	}
+	cout << answer;
+	
+}
+
+int main()
+{
+	input();
+	solution();
+	return 0;
+}
