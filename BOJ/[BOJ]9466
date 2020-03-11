@@ -1,0 +1,80 @@
+#include<iostream>
+#include<queue>
+#define MAX 100001
+using namespace std;
+
+int arr[MAX];
+
+int dfs(int idx, bool *team, int n)
+{
+	queue<int> q;
+	vector<int> v;
+	int answer = 0;
+	
+	//bool cir[MAX];	
+	q.push(idx);
+	v.push_back(idx);
+
+	while (!q.empty())
+	{
+		int tmp = q.front();
+		team[tmp] = true;
+		q.pop();
+		//v.push_back(tmp);
+
+		int next = arr[tmp];
+
+		if (team[next] == true) //이미 방문한 곳을 또 방문하고
+		{
+			int size = v.size();
+			bool check = false;
+			for (int i = 0; i < size; i++)
+			{
+				if (v[i] == next)
+				{
+					check = true;
+				}
+				if (check)answer++;
+			}
+			return answer;
+		}
+
+		else
+		{
+			//team[next] = true;	//방문처리
+			q.push(next);
+			v.push_back(next);
+		}
+	}
+	return answer;
+}
+
+int main()
+{
+	int test_case;
+	cin >> test_case;
+	while (test_case--)
+	{
+		int n;
+		bool team[MAX];
+		cin >> n;
+		int answer = n;
+		for (int i = 1; i <= n; i++)
+		{
+			cin >> arr[i];
+			team[i] = false;
+		}
+
+		for (int i = 1; i <= n; i++)	//dfs 로 팀 만들기
+		{
+			if (team[i] == false) //팀에 포함되지 않으면 dfs
+			{
+				answer-=dfs(i, team, n);
+			}
+		}
+
+		cout << answer << "\n";
+
+	}
+
+}
