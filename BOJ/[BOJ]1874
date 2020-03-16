@@ -1,0 +1,58 @@
+#include<iostream>
+#include<stack>
+#include<vector>
+#include<algorithm>
+#define MAX 100001
+using namespace std;
+
+int n,arr[MAX]; 
+vector <int> q;
+
+void input()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> arr[i];
+		q.push_back(arr[i]);
+	}
+	sort(q.begin(), q.end());
+}
+
+void solution()
+{
+	stack<int> cmp;
+	vector<char> answer;
+	int idx = 0;
+	for (int i = 0; i < n; i++)
+	{
+		cmp.push(q[i]);
+		answer.push_back('+');
+		while ( cmp.size()>0 && cmp.top() == arr[idx] )
+		{
+			idx++;
+			cmp.pop();
+			answer.push_back('-');
+		}
+	}
+
+	if (cmp.size() == 0)
+	{
+		int size = answer.size();
+		for (int i = 0; i < size; i++)
+		{
+			cout << answer[i]<<"\n";
+		}
+	}
+	else
+	{
+		cout << "NO";
+	}
+}
+
+int main()
+{
+	input();
+	solution();
+	return 0;
+}
