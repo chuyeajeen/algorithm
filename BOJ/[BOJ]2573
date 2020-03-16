@@ -1,0 +1,134 @@
+/*
+빙산 덩어리 체크를 먼저 한 후, 녹이는 것이 중요
+첫 입력부터 빙산덩어리 >1 일때 answer값 1로 출력되는것 방지 가능
+*/
+
+#include<iostream>
+#include<queue>
+#define MAX 301
+using namespace std;
+
+int n, m, arr[MAX][MAX];
+int dx[4] = { 0,0,1,-1 };
+int dy[4] = { 1,-1,0,0 };
+
+void input()
+{
+	cin >> n >> m;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+			cin >> arr[i][j];
+	}
+}
+
+bool glacier_melting()
+{
+	bool check = false;
+	int cpy[MAX][MAX] = { 0, };
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			if (arr[i][j] > 0)
+			{
+				check = true;
+				int count = 0;
+				for (int dir = 0; dir < 4; dir++)
+				{
+					int nx = i + dx[dir];
+					int ny = j + dy[dir];
+
+					if (arr[nx][ny] == 0)
+						count++;
+				}
+				cpy[i][j]=arr[i][j] - count;
+				if (cpy[i][j] < 0)cpy[i][j] = 0;
+			}
+			
+		}
+	}
+
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+			arr[i][j] = cpy[i][j];
+	}
+
+	return check;
+}
+
+void bfs(int x, int y, int (*visit)[MAX])
+{
+	queue<pair<int, int>> q;
+	q.push({ x, y });
+	visit[x][y] = 1;
+
+	while (!q.empty())
+	{
+		int nx = q.front().first;
+		int ny = q.front().second;
+		q.pop();
+
+		for (int dir = 0; dir < 4; dir++)
+		{
+			int nnx = nx + dx[dir];
+			int nny = ny + dy[dir];
+
+			if (nnx < 0 || nny < 0 || nnx >= n || nny >= m)continue;
+			else if (arr[nnx][nny] > 0 && visit[nnx][nny]==0)
+			{
+				q.push({ nnx, nny });
+				visit[nnx][nny] = 1;
+			}
+		}
+	}
+}
+
+int area_check()
+{
+	int num = 0;
+	int visit[MAX][MAX] = { 0, };
+
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			if (arr[i][j] > 0 && visit[i][j]==0 )
+			{
+				num++;
+				bfs(i, j, visit);
+			}
+		}
+	}
+	return num;
+}
+
+void solution()
+{
+	int num = 1;
+	int answer = 0;
+	bool check = true;
+	while (check)
+	{
+		num = area_check();
+		if (num > 1)
+		{
+			cout << answer;
+			break;
+		}
+		check = glacier_melting();
+		answer++;
+	}
+	if (check == false)
+	{
+		cout << "0";
+	}
+}
+
+int main()
+{
+	input();
+	solution();
+	return 0;
+}
