@@ -1,0 +1,102 @@
+#include<iostream>
+#include<queue>
+#define MAX 101
+using namespace std;
+
+int n, arr[MAX][MAX], cpy[MAX][MAX], max_water;
+int dx[4] = { 0,0,1,-1 };
+int dy[4] = { 1,-1,0,0 };
+
+void input()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			cin >> arr[i][j];
+			cpy[i][j] = arr[i][j];
+			if (arr[i][j] > max_water)max_water = arr[i][j];
+		}
+	}
+}
+
+void flooding(int water)
+{
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (arr[i][j] <= water)
+			{
+				arr[i][j] = -1;
+			}
+		}
+	}
+}
+
+void bfs(int x, int y, int (*visit)[101])
+{
+	queue<pair<int, int>> q;
+	q.push({ x,y });
+	visit[x][y] = 1;
+
+	while (!q.empty())
+	{
+		int nx = q.front().first;
+		int ny = q.front().second;
+		q.pop();
+
+		for (int i = 0; i < 4; i++)
+		{
+			int nnx = nx + dx[i];
+			int nny = ny + dy[i];
+
+			if (nnx < 0 || nny < 0 || nnx >= n || nny >= n)continue;
+			else if (arr[nnx][nny] >= 0 && visit[nnx][nny]==0)
+			{
+				q.push({ nnx, nny });
+				visit[nnx][nny] = 1;
+			}
+		}
+	}
+}
+
+int area_inspection()
+{
+	int count = 0;
+	int visit[MAX][MAX] = { 0, };
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (arr[i][j] >= 0 && visit[i][j]==0)
+			{
+				count++;
+				bfs(i, j, visit);
+			}
+		}
+	}
+
+	return count;
+}
+
+void solution()
+{
+	int answer = 0;
+	for (int i = 0; i <= max_water; i++)
+	{
+		flooding(i);
+		int tmp = area_inspection();
+		if (answer < tmp)answer = tmp;
+	}
+
+	cout << answer;
+}
+
+int main()
+{
+	input();
+	solution();
+	return 0;
+}
