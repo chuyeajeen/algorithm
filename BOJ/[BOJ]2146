@@ -1,0 +1,138 @@
+/*
+틀린 이유
+bfs_bridge 함수에서 마지막 return 0 을 해줘서 하나의 꼭지점에서 다른 나라로 가지 못하는 경우 return 0이 됨
+return 1000으로 수정
+*/
+
+#include<iostream>
+#include<queue>
+#define MAX 101
+#define INFINITY 987654321
+using namespace std;
+
+int n, arr[MAX][MAX], cpy[MAX][MAX];
+int dx[4] = { 0,0,1,-1 };
+int dy[4] = { 1,-1,0,0 };
+queue<pair<int, int>> edge;
+
+void input()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+			cin >> arr[i][j];
+	}
+}
+
+void bfs(int x, int y, int(*visit)[101], int idx)
+{
+	queue<pair<int, int>> q;
+	q.push({ x,y });
+	visit[x][y] = 1;
+	arr[x][y] = idx;
+
+	while (!q.empty())
+	{
+		int nx = q.front().first;
+		int ny = q.front().second;
+		q.pop();
+		int count = 0;
+		for (int i = 0; i < 4; i++)
+		{
+			int nnx = nx + dx[i];
+			int nny = ny + dy[i];
+			
+			if (nnx < 0 || nny < 0 || nnx >= n || nny >= n)
+			{
+				continue;
+			}
+
+			else if (arr[nnx][nny] == 0 )
+			{
+				edge.push({ nx,ny });
+				continue;
+			}
+			else if(arr[nnx][nny]==1 && visit[nnx][nny]==0)
+			{
+				q.push({ nnx, nny });
+				arr[nnx][nny] = idx;	//지역마다 라벨링
+				visit[nnx][nny] = 1;
+			}
+		}
+	}
+}
+
+int bfs_bridge(int x, int y)
+{
+	int check[MAX][MAX] = { 0, };
+	queue<pair<int, int>> q;
+	q.push({ x, y });
+	check[x][y] = 1;
+	int count = 0;
+	
+	while (!q.empty())
+	{
+		count++;
+		int size = q.size();
+		while (size--)
+		{
+			int nx = q.front().first;
+			int ny = q.front().second;
+			q.pop();
+			for (int i = 0; i < 4; i++)
+			{
+				int nnx = nx + dx[i];
+				int nny = ny + dy[i];
+
+				if (nnx < 0 || nny < 0 || nnx >= n || nny >= n)continue;
+				if (arr[nnx][nny] == 0 && check[nnx][nny] == 0)
+				{
+					check[nnx][nny] = 1;
+					q.push({ nnx,nny });
+				}
+				else if (arr[nnx][nny] != 0 && arr[nnx][nny] != arr[x][y])
+				{
+					return count;
+				}
+			}
+		}
+	}
+
+	return 1000;
+}
+
+void solution()
+{
+	int visit[MAX][MAX] = { 0, };
+	int count = 2;
+	int answer = INFINITY;
+
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (arr[i][j] > 0 && visit[i][j]==0)
+			{
+				bfs(i, j, visit,count++);
+			}
+		}
+	}
+
+	while (!edge.empty())
+	{
+		int x = edge.front().first;
+		int y = edge.front().second;
+		edge.pop();
+		int tmp = bfs_bridge(x, y);
+		if (answer > tmp)answer = tmp;
+	}
+	cout << answer-1;
+}
+
+int main()
+{
+	input();
+	solution();
+	return 0;
+}
