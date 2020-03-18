@@ -1,0 +1,57 @@
+/*
+큰 숫자를 기준으로 bigger vector
+작은 숫자를 기준으로 smaller vector
+두개의 vector로 가장 높은 등수는 1+smaller의 depth
+가장 낮은 등수는 n-bigger의 depth
+*/
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#define MAX 100001
+using namespace std;
+
+int n,m,x;
+vector<int> bigger[MAX], smaller[MAX];
+
+int bfs(vector<int> v[])
+{
+	int depth = 0;
+	bool visit[MAX] = { false, };
+	queue<int> q;
+	visit[x] = true;
+	q.push(x);
+
+	while (!q.empty())
+	{
+		int num = q.front();
+		q.pop();
+		for (int i = 0; i < v[num].size(); i++)
+		{
+			int tmp = v[num][i];
+			if (visit[tmp] == false)
+			{
+				visit[tmp] = true;
+				q.push(tmp);
+				depth++;
+			}
+		}
+
+	}
+	return depth;
+}
+
+int main()
+{
+	cin >> n >> m >> x;
+	while (m--)
+	{
+		int big, small;
+		cin >> big >> small;
+		bigger[big].push_back(small);
+		smaller[small].push_back(big);
+	}
+	cout << 1 + bfs(smaller) <<' '<<n - bfs(bigger);
+	
+	return 0;
+}
