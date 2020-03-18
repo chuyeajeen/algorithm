@@ -1,0 +1,51 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#define MAX 500000
+
+using namespace std;
+
+int n, arr[MAX],red,blue;
+
+int change(int idx, char color)
+{
+	int answer = 0;
+	int tmp = idx;
+	int count = 0;
+	while (arr[tmp] == color) //idx기준으로 연속된 color 개수 찾기
+	{
+		if (idx == 0)tmp++;
+		else tmp--;
+		count++;
+	}
+	if (color == 'R')
+		return red - count; //옮겨야 하는 공의 숫자는 (color의 모든 공의 수) - (idx 기준 연속된 color 수)
+	else
+		return blue - count;
+}
+
+int main()
+{
+	string tmp;
+	int answer=987564321;
+
+	cin >> n>>tmp;
+	for (int i = 0; i < n; i++)
+	{
+		arr[i] = tmp[i];
+		if (arr[i] == 'R')red++;
+		else blue++;
+	}
+
+	int temp = change(0, 'R'); //왼쪽으로 빨간색 모으기
+	answer = answer > temp ? temp : answer;
+	temp = change(0, 'B');  //왼쪽으로 파란색 모으기
+	answer = answer > temp ? temp : answer;
+	temp = change(n-1, 'R');  //오른쪽으로 빨간색 모으기
+	answer = answer > temp ? temp : answer;
+	temp = change(n-1, 'B');  //오른쪽으로 파란색 모으기
+	answer = answer > temp ? temp : answer;
+
+	cout << answer;
+	return 0;
+}
