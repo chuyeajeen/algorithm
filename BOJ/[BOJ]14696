@@ -1,0 +1,60 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+
+
+int main()
+{
+
+	int test_case;
+	cin >> test_case;
+
+	while (test_case--)
+	{
+		vector<int> team_a, team_b;
+		int num_a, num_b;
+		cin >> num_a;
+		for(int i=0;i<num_a;i++)
+		{
+			int tmp;
+			cin >> tmp;
+			team_a.push_back(tmp);
+		}
+		cin >> num_b;
+		for(int i=0;i<num_b;i++)
+		{
+			int tmp;
+			cin >> tmp;
+			team_b.push_back(tmp);
+		}
+
+		sort(team_a.begin(), team_a.end(), greater<int>());
+		sort(team_b.begin(), team_b.end(), greater<int>());
+		bool check = true;
+		int len = num_a > num_b? num_b-1 : num_a-1;
+		for(int idx=0;idx<=len;idx++)
+		{
+			if (team_a[idx] == team_b[idx]) continue;
+			else if (team_a[idx] > team_b[idx])
+			{
+				cout << "A\n";
+				check = false;
+				break;
+			}
+			else
+			{
+				cout << "B\n";
+				check = false;
+				break;
+			}
+		}
+		if (check)
+		{
+			if (num_a == num_b)cout << "D\n";
+			else if(num_a > num_b)cout << "A\n";
+			else if (num_a < num_b)cout << "B\n";
+		}
+	}
+	return 0;
+}
