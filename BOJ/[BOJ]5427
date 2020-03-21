@@ -1,0 +1,124 @@
+/*
+[틀린이유]
+@시작 좌표가 바로 탈출할 수 있는 곳일경우 예외처리 필요..
+*/
+
+
+#include<iostream>
+#include<queue>
+#include<vector>
+#define MAX 1001
+using namespace std;
+
+int dx[4] = { 0,0,1,-1 };
+int dy[4] = { 1,-1,0,0 };
+int n,m, answer;
+char arr[MAX][MAX];
+queue<pair<int, int>> fire;
+
+void fire_spread()
+{
+	int size = fire.size();
+	for (int i = 0; i < size;i++)
+	{
+		int x = fire.front().first;
+		int y = fire.front().second;
+		fire.pop();
+		for (int j = 0; j < 4; j++)
+		{
+			int nx = x + dx[j];
+			int ny = y + dy[j];
+			if (nx < 0 || ny < 0 || nx >= n || ny >= m)continue;
+			else if (arr[nx][ny] == '.')
+			{
+				arr[nx][ny] = '*';
+				fire.push({ nx,ny });
+			}
+		}
+	}
+}
+
+void bfs(int s_x, int s_y)
+{
+	answer = 0;
+	queue<pair<int, int>> q;
+	bool visit[MAX][MAX] = { false, };
+	q.push({ s_x, s_y });
+	visit[s_x][s_y] = true;
+
+	while (!q.empty())
+	{
+		fire_spread(); //불 먼저 퍼트리기
+		int size = q.size();
+		answer++;
+		while (size--)
+		{
+
+			int x = q.front().first;
+			int y = q.front().second;
+			q.pop();
+			for (int i = 0; i < 4; i++)
+			{
+				int nx = x + dx[i];
+				int ny = y + dy[i];
+				if (nx < 0 || ny < 0 || nx >= n || ny >= m||visit[nx][ny]==true||arr[nx][ny]=='#'||arr[nx][ny]=='*')continue;
+				else 
+				{
+					if (nx == 0 || ny == 0 || nx == n - 1 || ny == m - 1)
+					{
+						cout << answer+1<<"\n"; //탈줄 가능 좌표에서 나가는 시간 +1초
+						return;
+					}
+					else
+					{
+						q.push({ nx,ny });
+						visit[nx][ny] = true;
+					}
+				}
+			}
+		}
+		
+	}
+
+	cout << "IMPOSSIBLE\n";
+
+
+}
+
+int main()
+{
+	int test_case;
+	cin >> test_case;
+	while (test_case--)
+	{
+		int start_x, start_y;
+		cin >> m>>n;
+		for (int i = 0; i < n; i++)
+		{
+			string tmp;
+			cin >> tmp;
+			for (int j = 0; j < m; j++)
+			{
+				arr[i][j] = tmp[j];
+				if (arr[i][j] == '@')
+				{
+					start_x = i;
+					start_y = j;
+				}
+				else if (arr[i][j] == '*')
+				{
+					fire.push({ i,j });
+				}
+			}
+		}
+		if (start_x == 0 || start_y == 0 || start_x == n - 1 || start_y == m - 1)cout << "1\n"; //@첫 ㅈ좌표가 탈출 가능한 좌표이면 바로 1출력
+		else
+		{
+			bfs(start_x, start_y);
+			int size = fire.size();
+			for (int i = 0; i < size; i++)
+				fire.pop();
+		}
+	}
+	return 0;
+}
