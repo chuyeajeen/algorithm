@@ -1,0 +1,42 @@
+#include<stdio.h>
+#include<iostream>
+#include<vector>
+#include<math.h>
+#include<stdio.h>
+using namespace std;
+int test_case;
+
+int main() 
+{
+	cin >> test_case;
+	for (int i = 0; i < test_case; i++)
+	{
+		string h, n;
+		int count_h = 0, count_n = 0;
+		cin >> h >> n;
+		for (int i = 0; i < h.size(); i++)
+		{
+			if (h[i] != n[i])
+			{
+				if (h[i] == '1')
+				{
+					count_h++;
+				}
+				else if (n[i] == '1')
+				{
+					count_n++;
+				}
+			}
+		}
+		if (count_h > count_n)
+		{
+			int tmp = count_h;
+			count_h = count_n;
+			count_n = tmp;
+		}
+		int result = count_n;
+		printf("%d\n", result);
+		
+	}
+	return 0;
+}
