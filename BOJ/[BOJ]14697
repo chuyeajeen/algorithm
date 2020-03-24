@@ -1,0 +1,43 @@
+#include <iostream>
+using namespace std;
+
+int room_num[3];
+int n;
+
+void input()
+{
+    for(int i=0;i<3;i++)
+    {
+        cin>>room_num[i];
+    }
+    cin>>n;
+}
+
+void solution()
+{
+    for(int a=0;a<=n/room_num[0];a++)
+    {
+        int tmp = n-a*room_num[0];
+        for(int b=0;b<=n/room_num[1];b++)
+        {
+            int tmpb=tmp-b*room_num[1];
+            for(int c=0;c<=n/room_num[2];c++)
+            {
+                int tmpc=tmpb-c*room_num[2];
+                if(tmpc==0)
+                {
+                    cout<<"1\n";
+                    return;
+                }
+            }
+        }
+    }
+    cout<<"0\n";
+}
+
+int main(void)
+{
+    input();
+    solution();
+    return 0;
+}
