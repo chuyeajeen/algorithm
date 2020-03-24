@@ -1,0 +1,116 @@
+/*
+3차원으로 벽의 유무를 확인하여 벽이 없으면 해당 인덱스 방향으로 이동
+*/
+
+#include<iostream>
+#include<queue>
+#include<math.h>
+#define MAX 51
+using namespace std;
+
+int n, m;
+int arr[MAX][MAX][4];
+int dx[4] = { 0,-1,0,1 };
+int dy[4] = { -1,0,1,0 };
+
+void input()
+{
+	cin >> m >> n;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			int tmp;
+			cin >> tmp;
+
+			for (int k = 3; k >= 0; k--)
+			{
+				if (pow(2, k) <= tmp)
+				{
+					arr[i][j][k] = 1;
+					tmp -= pow(2, k);
+				}
+			}
+			
+		}
+	}
+}
+
+int bfs(int xx, int yy, int(*visit)[MAX])
+{
+	queue<pair<int, int>> q;
+	q.push({ xx,yy });
+	visit[xx][yy] = 1;
+	int size = 1;
+	while (!q.empty())
+	{
+		int x = q.front().first;
+		int y = q.front().second;
+		q.pop();
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (arr[x][y][i] == 0)//벽이 없으면
+			{
+				int nx = x + dx[i];
+				int ny = y + dy[i];
+				if (nx < 0 || ny < 0 || nx >= n || ny >= m || visit[nx][ny] == 1)continue;
+				else
+				{
+					q.push({ nx, ny });
+					size++;
+					visit[nx][ny] = 1;
+				}
+			}
+		}
+	}
+	return size;
+}
+
+void solution()
+{
+	//방 개수와 가장 큰 방 사이즈 구하기
+	int room_count = 0;
+	int max_roomsize = 0;
+	int visit[MAX][MAX] = { 0, };
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			if (visit[i][j] == 0)
+			{
+				room_count++;
+				int tmp = bfs(i, j, visit);
+				max_roomsize = max_roomsize > tmp ? max_roomsize : tmp;
+			}
+		}
+	}
+	//하나의 벽 제거하여 얻을 수 있는 가장 큰 방의 크기
+	int break_maxroom = 0;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			for (int k = 0; k < 4; k++)
+			{
+				if (arr[i][j][k] == 1)
+				{
+					arr[i][j][k] = 0;
+					int break_visit[MAX][MAX] = { 0, };
+					int tmp = bfs(i, j, break_visit);
+					break_maxroom = break_maxroom > tmp ? break_maxroom : tmp;
+					arr[i][j][k] = 1;
+				}
+			}
+		}
+	}
+
+	cout << room_count << "\n" << max_roomsize << "\n" << break_maxroom;
+}
+
+int main()
+{
+	input();
+	solution();
+	return 0;
+}
