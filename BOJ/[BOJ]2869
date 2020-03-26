@@ -1,0 +1,25 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+int main()
+{
+	int foward, back, len,mod, result = 0;
+	scanf("%d %d %d", &foward, &back, &len);
+
+	result = (len - foward) / (foward-back);
+	mod = (len - foward) % (foward-back)+foward;
+	while (true)
+	{
+		if (foward < mod)
+		{
+			result++;
+			mod = mod - foward + back;
+		}
+		else
+		{
+			result++;
+			break;
+		}
+	}
+	
+	printf("%d", result);
+}
