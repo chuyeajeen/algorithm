@@ -1,0 +1,85 @@
+/*
+땅에서 가장 먼 땅을 찾아야 해서 모든 땅에서 bfs함수 호출
+bfs안에서 visit 지역변수로 처리
+*/
+
+#include<iostream>
+#include<queue>
+#define MAX 51
+using namespace std;
+int n, m;
+char arr[MAX][MAX];
+int dx[4] = { 0,0,1,-1 };
+int dy[4] = { 1,-1,0,0 };
+
+void input()
+{
+	cin >> n >> m;
+	for (int i = 0; i < n; i++)
+	{
+		string tmp;
+		cin >> tmp;
+		for (int j = 0; j< m; j++)
+		{
+			arr[i][j] = tmp[j];
+		}
+	}
+}
+
+int bfs(int L_x, int L_y)
+{
+	int visit[MAX][MAX] = { 0, };
+	visit[L_x][L_y] = 1;
+	queue<pair<int, int>> q;
+	q.push({ L_x, L_y });
+	int answer = 0;
+
+	while (!q.empty())
+	{
+		
+		int size = q.size();
+		answer++;
+		while (size--)
+		{
+			int x = q.front().first;
+			int y = q.front().second;
+			q.pop();
+			for (int i = 0; i < 4; i++)
+			{
+				int nx = x + dx[i];
+				int ny = y + dy[i];
+				if (nx < 0 || ny < 0 || nx >= n || ny >= m)continue;
+				if (arr[nx][ny] == 'L' && visit[nx][ny] == 0)
+				{
+					visit[nx][ny] = 1;
+					q.push({ nx,ny });
+				}
+			}
+		}
+	}
+	return answer-1;
+}
+
+void solution()
+{
+	int answer = 0;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			if (arr[i][j] == 'L')
+			{
+				int tmp = bfs(i, j);
+				answer = answer < tmp ? tmp : answer;
+			}
+		}
+	}
+	cout << answer;
+}
+
+int main()
+{
+	input();
+	solution();
+	return 0;
+}
