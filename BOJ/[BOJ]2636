@@ -1,0 +1,81 @@
+/*
+**(0,0) 부터 dfs돌려 외부공기와 접촉한 치즈 +1로 카운트 해주기 --> 외부공기와 접촉하는 치즈는 2이상의 값**
+
+while(cheese없을때 까지)
+2이상값이면 녹이고 cheese--
+*/
+
+#include<iostream>
+#include<cstring>
+#define MAX 101
+using namespace std;
+
+int n, m, cheese;
+int arr[MAX][MAX], visit[MAX][MAX];
+void input()
+{
+	cin >> n >> m;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			cin >> arr[i][j];
+			if (arr[i][j] == 1)
+				cheese++;
+		}
+	}
+}
+
+void find_cheese(int x, int y)
+{
+	if (x < 0 || y < 0 || x >= n || y >= m || visit[x][y]==1)return;
+
+	if (arr[x][y] == 0)
+	{
+		visit[x][y] = 1;
+		find_cheese(x + 1, y);
+		find_cheese(x - 1, y);
+		find_cheese(x, y + 1);
+		find_cheese(x, y - 1);
+	}
+	else
+		arr[x][y] += 1;
+}
+
+void solution()
+{
+	int before_cheese = 0;
+	int answer = 0;
+	while (cheese)
+	{
+		answer++;
+		//0,0 부터 dfs를 통하여 외부 공기와 접하는 치즈 구별
+		memset(visit, 0, sizeof(visit));
+		find_cheese(0, 0);
+
+		before_cheese = cheese;
+
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < m; j++)
+			{
+				if (arr[i][j] > 1)//녹일 치즈
+				{
+					arr[i][j] = 0;
+					cheese--;
+				}
+			}
+		}
+
+
+	}
+
+	cout << answer << "\n" << before_cheese;
+}
+
+int main()
+{
+	input();
+	solution();
+	return 0;
+}
