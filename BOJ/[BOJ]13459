@@ -1,0 +1,108 @@
+/*
+방향 bfs로 완탐 하며 구슬 옮겨보면서 체크
+1. 파란구슬 먼저 'o'인지 확인 후 빨간 구슬 체크
+2. move함수에서 'O'좌표 까지 가야해서 arr[nrx][nry]까지만 확인
+    '#'좌표 까지 가지 않아도 되서  arr[nrx+dx][nry+dy] 까지 확인
+*/
+
+#include<iostream>
+#include<queue>
+#define MAX 11
+using namespace std;
+struct marble {
+	int rx, ry, bx, by, dir;
+};
+
+char arr[MAX][MAX];
+int n, m;
+int dx[4] = { 0,0,1,-1 };
+int dy[4] = { 1,-1,0,0 };
+queue<marble> q;
+bool check[MAX][MAX][MAX][MAX];
+
+void move(int& nrx, int& nry, int& move_r, int dx, int dy)
+{
+	while (1)
+	{
+		if (arr[nrx+dx][nry+dy] == '#' || arr[nrx][nry] == 'O')break;
+		nrx += dx;
+		nry += dy;
+		move_r++;
+	}
+}
+
+void bfs()
+{
+	while (!q.empty())
+	{
+		int rx = q.front().rx;
+		int ry = q.front().ry;
+		int bx = q.front().bx;
+		int by = q.front().by;
+		int dir = q.front().dir;
+		q.pop();
+		if (dir > 9)continue;
+		for (int i = 0; i < 4; i++)
+		{
+			int nrx = rx, nry = ry, nbx = bx, nby = by;
+			int move_r = 0, move_b = 0;
+			move(nrx, nry, move_r, dx[i], dy[i]);
+			move(nbx, nby, move_b, dx[i], dy[i]);
+			if (arr[nbx][nby] == 'O')continue;
+			else if (arr[nrx][nry] == 'O')
+			{
+				cout << dir + 1;
+				return;
+			}
+
+			if (nrx == nbx && nry == nby)
+			{
+				if (move_r > move_b) 
+				{ nrx -= dx[i]; nry -= dy[i]; }
+				else
+				{
+					nbx -= dx[i]; nby -= dy[i];
+				}
+			}
+			if (check[nrx][nry][nbx][nby])continue;
+			check[nrx][nry][nbx][nby] = true;
+			q.push({ nrx, nry, nbx, nby, dir + 1 });
+		}
+
+	}
+	cout << "-1";
+}
+
+void input()
+{
+	cin >> n >> m;
+	int rx, ry, bx, by;
+	for (int i = 0; i < n; i++)
+	{
+		string tmp;
+		cin >> tmp;
+		for (int j = 0; j < m; j++)
+		{
+			arr[i][j] = tmp[j];
+			if (arr[i][j] == 'R')
+			{
+				rx = i;
+				ry = j;
+			}
+			else if (arr[i][j] == 'B')
+			{
+				bx = i;
+				by = j;
+			}
+		}
+	}
+	q.push({ rx,ry,bx,by,0 });
+	check[rx][ry][bx][by] = true;
+	bfs();
+}
+
+int main()
+{
+	input();
+	return 0;
+}
