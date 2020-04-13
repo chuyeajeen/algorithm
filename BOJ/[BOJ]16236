@@ -1,0 +1,120 @@
+/*
+1.물고기에서부터 상어까지 bfs()
+2. MAX값과 INFINITY값 초기 주의
+*/
+
+#include<iostream>
+#include <queue>
+#define MAX 52
+#define INFINITY 987654321
+using namespace std;
+int arr[MAX][MAX];
+int n, shark_x, shark_y;
+int dx[4] = { 0,0,1,-1 };
+int dy[4] = { 1,-1,0,0 };
+void input()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			cin >> arr[i][j];
+			if (arr[i][j] == 9) {
+				arr[i][j] = 0;
+				shark_x = i;
+				shark_y = j;
+			}
+		}
+	}
+}
+
+int bfs(int x, int y, int s_size)
+{
+	queue<pair<int, int>> q;
+	q.push({ x,y });
+	int dist = 0;
+	int visit[MAX][MAX] = { 0, };
+	visit[x][y] = 1;
+	while (!q.empty())
+	{
+		dist++;
+		int size = q.size();
+		while (size--)
+		{
+			int xx = q.front().first;
+			int yy = q.front().second;
+			q.pop();
+			for (int i = 0; i < 4; i++)
+			{
+				int nx = xx + dx[i];
+				int ny = yy + dy[i];
+				if (nx < 0 || ny < 0 || nx >= n || ny >= n)continue;
+				if (nx == shark_x && ny == shark_y)
+				{
+					return dist;
+				}
+				if (arr[nx][ny] <=s_size && visit[nx][ny]==0)
+				{
+					q.push({ nx,ny });
+					visit[nx][ny] = 1;
+				}
+			}
+		}
+	}
+	return INFINITY;
+}
+
+void soluiton()
+{
+	int shark_size = 2;
+	bool check = true;
+	int answer = 0;
+	int eatint = 0;
+	while (check)
+	{
+		check = false;
+		int dist = INFINITY;
+		int eat_x=0; int eat_y=0;
+
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < n; j++)
+			{
+				if (shark_size > arr[i][j] && arr[i][j] > 0)
+				{
+					int tmp_dist = bfs(i, j, shark_size);
+					if (dist > tmp_dist)
+					{
+						check = true;
+						dist = tmp_dist;
+						eat_x = i;
+						eat_y = j;
+					}
+				}
+			}
+		}
+
+		if (check)
+		{
+			answer += dist;
+			shark_x = eat_x;
+			shark_y = eat_y;
+			arr[eat_x][eat_y] = 0;
+			eatint++;
+			if (eatint == shark_size)
+			{
+				eatint = 0;
+				shark_size++;
+			}
+		}
+	}
+	cout << answer;
+}
+
+int main()
+{
+	input();
+	soluiton();
+	return 0;
+}
