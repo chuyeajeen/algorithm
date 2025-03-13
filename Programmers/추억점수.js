@@ -11,4 +11,6 @@ function solution(name, yearning, photo) {
         answer.push(sum);
     }
     return answer;
+    // return photo.map((v)=> v.reduce((a, c)=> a += yearning[name.indexOf(c)] ?? 0),0);
+
 }
